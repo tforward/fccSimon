@@ -1,0 +1,173 @@
+/* CSS */
+
+html {
+    box-sizing: border-box;
+  }
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+  
+  .column{
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .row{
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .frame {
+    padding: 1.618vw;
+    background-color: #454545;
+    border-radius: 50%;
+  }
+  
+  .simonOuterBody {
+    border-radius: 50%;
+    padding: 1.618vw;
+    border-width: calc(3em + 15vw);
+    border-style: solid;
+    border-color: #F8311A #4DD95C #0298E8 #FFF732;
+    transform: rotate(45deg);
+  }
+  
+  .simonInnerBody {
+    padding: 1.618vw;
+    border-radius: 50%;
+    background-color: #2B292E;
+    position: absolute;
+    transform: rotate(-45deg);
+  }
+  
+  .simonControls {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 1.618vw;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  
+  h2{
+    margin: 1vw;
+    color: black;
+    font-size: calc(3vw + 0.1vh);
+    font-weight: bold;
+  }
+  
+  .simonScore {
+    margin: -0.1vw 1vw 0vw 1vw;
+    font-weight: bold;
+    font-size: 4vw;
+    height: 4vw;
+    width: 8vw;
+    border: 0.2vw solid black;
+    border-radius: 5px;
+    color: #FF000C;
+    background-color: #33021D;
+  }
+  
+  .simonStart {
+    margin: -0.1vw 1vw 0vw 1vw;
+    height: 2.5vw;
+    width: 2.5vw;
+    border: 0.2vw solid #333333;
+    background-color: red;
+    border-radius: 50%;
+   }
+  
+  .simonStrict {
+    margin: -0.1vw 1vw 0vw 1vw;
+    height: 2.5vw;
+    width: 2.5vw;
+    border: 0.2vw solid #333333;
+    background-color: yellow;
+    border-radius: 50%;
+   }
+  
+  .simonStrictLight {
+    margin: 0.6vw 0vw 0.5vw 0vw;
+    height: 0.7vw;
+    width: 0.7vw;
+    border: 0.2vw solid #333333;
+    background-color: black;
+    border-radius: 50%;
+   }
+  
+  .simonStrictLight2 {
+    margin: 0.6vw 0vw 0.5vw 0vw;
+    height: 0.7vw;
+    width: 0.7vw;
+    visibility: hidden;
+   }
+  
+  .holder{
+    margin-top: 1vw;
+  }
+  
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 7vw;
+    height: 4vw;
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch button {display:none;}
+  
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 34vw;
+    background-color: #ccc;
+    transition: .4s ease;
+    -webkit-transition: .4s ease;
+  }
+  
+  .ball {
+    position: absolute;
+    height: 3vw;
+    width: 3vw;
+    left: 0.5vw;
+    bottom: 0.5vw;
+    border-radius: 50%;
+    background-color: white;
+    transition: .4s ease;
+    -webkit-transition: .4s ease;
+  }
+  
+  .disable{
+    background-color: #EB5B43;
+  }
+  
+  .enable{
+    background-color: #49D06E;
+  }
+  
+  h4 {
+    margin: 0.3vw 0.5vw;
+    font-size: calc(0.5em + 0.5vw);
+  }
+  
+  .wide {
+    width: 30%;
+    height: 30%;
+  }
+  
+  .maincolumn{
+    display: flex;
+    flex-direction: column;
+    height: 97vh;
+  }
+  
+  .center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }  
