@@ -6,7 +6,7 @@
     "env": {
         "browser": true,
         "node": true,
-        "jest": true
+        "jest": false
     },
     "rules": {
         "quotes": [

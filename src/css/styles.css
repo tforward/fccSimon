@@ -31,7 +31,16 @@ html {
     border-color: #F8311A #4DD95C #0298E8 #FFF732;
     transform: rotate(45deg);
   }
-  
+
+  .btnClassRed {
+    border-radius: 50%;
+    padding: 1.618vw;
+    border-width: calc(3em + 15vw);
+    border-style: solid;
+    border-color: #F8311A #4DD95C #0298E8 #FFF732;
+   
+  }
+
   .simonInnerBody {
     padding: 1.618vw;
     border-radius: 50%;
