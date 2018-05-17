@@ -25,19 +25,17 @@ myApp.initApplication = function init() {
 
   // You can change out the Delegator used if needed
   // Elements part of the same delegator share the same properites
-  createObserversById(myApp.subscribers, ["EventTestingArea1", "EventTestingArea2"], TestDelegator);
+  createObserversById(myApp.subscribers, ["toggleBtn"], ElementDelegator);
+
+  console.log(myApp.subscribers.observers);
 
   // Run any setup Delegators here
-  myApp.subscribers.broadcast("setup");
+  // myApp.subscribers.broadcast("setup");
 };
 
 myApp.main = function main(selfId) {
   if (selfId) {
     console.log(selfId);
-
-    const elem = document.getElementById(selfId);
-
-    console.log(elem.style.borderColor);
 
     // http://dabblet.com/gist/5476973
 
@@ -227,7 +225,6 @@ function EventDelegator() {
 
 function getTargetId(e, tags) {
   // Prevents events triggering on the parent
-  console.log(e);
   if (e.target !== e.currentTarget) {
     // Returns the target Id of event for allowed tags
     if (tags.indexOf(e.target.tagName) > -1) {

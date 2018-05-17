@@ -71,6 +71,7 @@ html {
     background-color: red;
     border-radius: 50%;
     cursor: pointer;
+    outline: none;
    }
   
   .simonStrict {
@@ -81,6 +82,7 @@ html {
     background-color: yellow;
     border-radius: 50%;
     cursor: pointer;
+    outline: none;
    }
   
   .simonStrictLight {
@@ -151,6 +153,7 @@ html {
     margin: 0.3vw 0.5vw;
     font-size: calc(0.5em + 0.5vw);
   }
+
   .maincolumn{
     display: flex;
     flex-direction: column;
@@ -181,31 +184,40 @@ html {
 .quarter:hover {
   background-color:pink;
   cursor: pointer;
+  z-index: 1;
+  outline: none;
 }
 .quarter1 {
 	top:0;
 	left:0;
 	background-color: #FFF732;
   border-radius:100% 0 0 0;
-  z-index: 1;
+  border: none;
+  outline: none;
 }
 .quarter2 {
 	top:0;
 	right:0;
 	background-color:#F8311A;
-	border-radius:0 100% 0 0 ;
+  border-radius:0 100% 0 0 ;
+  border: none;
+  outline: none;
 }
 .quarter3 {
 	bottom: 0;
 	left: 0;
 	background-color: #0298E8;
-	border-radius: 0 0 0 100%;
+  border-radius: 0 0 0 100%;
+  border: none;
+  outline: none;
 }
 .quarter4 {
 	bottom: 0;
 	right: 0;
 	background-color: #4DD95C;
-	border-radius: 0 0 100% 0 ;
+  border-radius: 0 0 100% 0 ;
+  border: none;
+  outline: none;
 }
 .middle_ring {
 	width: 50%;
