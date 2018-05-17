@@ -1,5 +1,7 @@
 "use strict";
 
+import css from "../css/styles.css";
+
 const myApp = Object.create(null);
 
 // ======================================================================

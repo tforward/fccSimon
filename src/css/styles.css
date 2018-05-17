@@ -16,46 +16,32 @@ html {
     display: flex;
     flex-direction: row;
   }
+
+  .outerFrame {
+    border-radius: 50%;
+    margin: -0.7vw;
+    background-color: #454545;
+  }
   
   .frame {
-    padding: 1.618vw;
-    background-color: #454545;
-    border-radius: 50%;
-  }
-  
-  .simonOuterBody {
-    border-radius: 50%;
-    padding: 1.618vw;
-    border-width: calc(3em + 15vw);
-    border-style: solid;
-    border-color: #F8311A #4DD95C #0298E8 #FFF732;
-    transform: rotate(45deg);
-  }
-
-  .btnClassRed {
-    border-radius: 50%;
-    padding: 1.618vw;
-    border-width: calc(3em + 15vw);
-    border-style: solid;
-    border-color: #F8311A #4DD95C #0298E8 #FFF732;
-   
+    height: calc(10em + 35vw);
+    width: calc(10em + 35vw);
   }
 
   .simonInnerBody {
-    padding: 1.618vw;
     border-radius: 50%;
-    background-color: #2B292E;
-    position: absolute;
-    transform: rotate(-45deg);
+    height: 100%;
+    width: 100%;
   }
   
   .simonControls {
     display: flex;
     flex-direction: column;
     background-color: white;
-    padding: 1.618vw;
+    height: 100%;
+    width: 100%;
     border-radius: 50%;
-    overflow: hidden;
+    border: 0.7vw solid #454545;
   }
   
   h2{
@@ -84,6 +70,7 @@ html {
     border: 0.2vw solid #333333;
     background-color: red;
     border-radius: 50%;
+    cursor: pointer;
    }
   
   .simonStrict {
@@ -93,6 +80,7 @@ html {
     border: 0.2vw solid #333333;
     background-color: yellow;
     border-radius: 50%;
+    cursor: pointer;
    }
   
   .simonStrictLight {
@@ -163,12 +151,6 @@ html {
     margin: 0.3vw 0.5vw;
     font-size: calc(0.5em + 0.5vw);
   }
-  
-  .wide {
-    width: 30%;
-    height: 30%;
-  }
-  
   .maincolumn{
     display: flex;
     flex-direction: column;
@@ -180,3 +162,58 @@ html {
     align-items: center;
     justify-content: center;
   }  
+
+
+  /**
+* Quarter Circles
+*/
+
+.main {
+	position: relative;
+}
+
+.quarter {
+	position:absolute;
+	width: 50%;
+	height: 50%;
+	transition: background-color 0.2s ease-in-out;
+}
+.quarter:hover {
+  background-color:pink;
+  cursor: pointer;
+}
+.quarter1 {
+	top:0;
+	left:0;
+	background-color: #FFF732;
+  border-radius:100% 0 0 0;
+  z-index: 1;
+}
+.quarter2 {
+	top:0;
+	right:0;
+	background-color:#F8311A;
+	border-radius:0 100% 0 0 ;
+}
+.quarter3 {
+	bottom: 0;
+	left: 0;
+	background-color: #0298E8;
+	border-radius: 0 0 0 100%;
+}
+.quarter4 {
+	bottom: 0;
+	right: 0;
+	background-color: #4DD95C;
+	border-radius: 0 0 100% 0 ;
+}
+.middle_ring {
+	width: 50%;
+	height: 50%;
+	background-color: white;
+	position: absolute;
+	top: 25%;
+	left: 25%;
+	border-radius: 50%;
+  z-index: 2;
+	}
