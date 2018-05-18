@@ -1,6 +1,8 @@
 "use strict";
 
-import css from "../css/styles.css";
+import { EventDelegator, getTargetId } from "./olooEvent";
+import { SubscribersDelegator, createObserversById } from "./olooObserver";
+import css_ from "../css/styles.css";
 
 const myApp = Object.create(null);
 
@@ -14,10 +16,21 @@ myApp.initApplication = function init() {
   const eventSandbox = EventDelegator();
   const eventSandboxElem = document.getElementById("eventSandboxMain");
   // Events are only triggered on defined tags
-  eventSandbox.initEvent(eventSandboxElem, "click", { tags: ["BUTTON", "DIV"] });
+  eventSandbox.initEvent(eventSandboxElem, "click", { tags: ["BUTTON"] });
   // Add the event to the event sandbox area
   // EventController Handles all events within the Event sandbox
   eventSandbox.addEvent(eventController);
+
+  myApp.toggleBtn = ToggleBtnDelegator();
+  myApp.toggleBtn.setup("toggleDiv", turnOn);
+
+  myApp.score = scoreElem();
+  myApp.score.init("scoreValue");
+  myApp.score.setup();
+
+  myApp.startBtn = startElem();
+  myApp.startBtn.init("btnSimonStart");
+  myApp.startBtn.off();
 
   // Create a event Observer
   myApp.subscribers = SubscribersDelegator();
@@ -27,7 +40,7 @@ myApp.initApplication = function init() {
   // Elements part of the same delegator share the same properites
   createObserversById(myApp.subscribers, ["toggleBtn"], ElementDelegator);
 
-  console.log(myApp.subscribers.observers);
+  // console.log(myApp.subscribers.observers);
 
   // Run any setup Delegators here
   // myApp.subscribers.broadcast("setup");
@@ -36,6 +49,15 @@ myApp.initApplication = function init() {
 myApp.main = function main(selfId) {
   if (selfId) {
     console.log(selfId);
+
+    const gameOn = checkToggleState(selfId);
+
+    if (gameOn) {
+      myApp.score.on();
+      myApp.startBtn.on();
+    } else {
+      myApp.score.setup();
+    }
 
     // http://dabblet.com/gist/5476973
 
@@ -66,6 +88,98 @@ myApp.main = function main(selfId) {
   }
 };
 
+function turnOn() {
+  console.log("");
+}
+
+function checkToggleState(selfId) {
+  const { toggle } = myApp.toggleBtn.btn;
+  if (toggle === 1) {
+    return true;
+  } else if (selfId !== "toggleBtn" && toggle === 0) {
+    alert("No sound comes from the Simon game, it appears to be off \n(Hint: Hit the toggle button)");
+    return false;
+  }
+  return undefined;
+}
+
+// ======================================================================
+//  Element Delegators
+// ======================================================================
+
+function startElem() {
+  const StartBtn = Object.create(ElementDelegator());
+  // I'm here I need to fix the toggle of this button, see the other toggle for help
+  StartBtn.off = function on() {
+    this.toggle = 0;
+    console.log(this.toggle);
+  };
+  StartBtn.on = function off() {
+    this.toggle = 1;
+    console.log(this.toggle);
+  };
+  return StartBtn;
+}
+
+function scoreElem() {
+  const Score = Object.create(ElementDelegator());
+
+  Score.setup = function setup() {
+    this.count = 0;
+    this.elem.textContent = "";
+  };
+  Score.on = function on() {
+    this.elem.textContent = "--";
+  };
+  Score.add = function add() {
+    this.count += 1;
+    Score.display();
+  };
+  Score.reset = function reset() {
+    this.count = 0;
+    Score.display();
+  };
+  Score.display = function display() {
+    this.elem.textContent = this.count;
+  };
+  return Score;
+}
+
+function ToggleBtnDelegator() {
+  const Button = Object.create(BtnElem());
+
+  Button.onClick = function toggleBtn() {
+    if (this.btn.toggle === 1) {
+      this.btn.toggle = 0;
+      this.slider.className = "slider round";
+      this.ball.className = "ball";
+    } else {
+      this.btn.toggle += 1;
+      this.slider.className = "slider round enable";
+      this.ball.className = "ball last";
+    }
+    this.func(this);
+  };
+  return Button;
+}
+
+function BtnElem() {
+  const Button = {
+    setup(elemId, func) {
+      this.div = document.getElementById(elemId);
+      this.label = this.div.getElementsByClassName("label")[0];
+      this.btn = this.div.getElementsByClassName("btn")[0];
+      this.slider = this.div.getElementsByClassName("slider")[0];
+      this.ball = this.div.getElementsByClassName("ball")[0];
+      this.btn.toggle = 0;
+      this.func = func;
+      this.btn.addEventListener("click", this.onClick.bind(this));
+      return this;
+    }
+  };
+  return Button;
+}
+
 // ======================================================================
 //  Delegators
 //
@@ -75,9 +189,9 @@ myApp.main = function main(selfId) {
 function ElementDelegator() {
   // This is the base Delegator "Class" for a element
   const Element = Object.create(null);
-  Element.init = function init(elemId, elem) {
+  Element.init = function init(elemId) {
     this.id = elemId;
-    this.elem = elem;
+    this.elem = document.getElementById(this.id);
   };
   // Can add new properties on the fly
   // But these will only apply to the "this" element and not all
@@ -144,97 +258,6 @@ function eventController(args, e) {
 
   // Stop the event from going further up the DOM
   e.stopPropagation();
-}
-
-// ======================================================================
-// Observer Pattern
-// ======================================================================
-
-function createObserversById(subscriber, ids, delegator) {
-  ids.forEach(elemId => {
-    const elem = document.getElementById(elemId);
-    const observer = delegator();
-    observer.init(elemId, elem);
-    subscriber.subscribe(observer);
-  });
-}
-
-function SubscribersDelegator() {
-  const Subscribe = Object.create(null);
-
-  Subscribe.init = function init() {
-    this.observers = Object.create(null);
-  };
-  Subscribe.subscribe = function subscribe(observer) {
-    this.observers[observer.id] = observer;
-  };
-  Subscribe.unsubscribe = function unsubscribe(observer) {
-    // Can unsubscribe one observer, or an array of observers
-    if (typeof observer === "string") {
-      delete this.observers[observer];
-    } else {
-      observer.forEach(key => delete this.observers[key]);
-    }
-  };
-  Subscribe.broadcast = function broadcast(func, ...args) {
-    // On each object called func
-    // Any additional args will get passed into the func
-    // define them just using comma seperator
-    const keys = Object.keys(this.observers);
-    for (let i = 0; i < keys.length; i += 1) {
-      this.observers[keys[i]][func](...args);
-    }
-  };
-  return Subscribe;
-}
-
-// ======================================================================
-// Event Utilities
-// ======================================================================
-
-function EventDelegator() {
-  // Creates an Event object on the element
-  const Event = Object.create(null);
-
-  Event.initEvent = function setup(elem, type, args) {
-    // The Element to bind the event handler too
-    this.elem = elem;
-    // The type of event ex: "Click"
-    this.eventType = type;
-    // Additional arguments that will be passed to the bound function as an object
-    this.args = args;
-    // If Array convert to object
-    if (Array.isArray(args)) {
-      this.args = Object.assign({}, args);
-    }
-  };
-  Event.addEvent = function add(func, options) {
-    // func: Bound an Function to an Event
-    // (options): Optional parameter for passing options to event listener ex: "once: true"
-    this.boundFunc = func.bind(this.elem, this.args);
-    // this.bound prevents binding loss for arguments and options
-    this.boundOptions = options;
-    this.elem.addEventListener(this.eventType, this.boundFunc, this.boundOptions);
-  };
-  Event.removeEvent = function remove() {
-    // Remove the listener, do not have to pass the "options" since it is bound
-    this.elem.removeEventListener(this.eventType, this.boundFunc, this.boundOptions);
-  };
-  return Event;
-}
-
-function getTargetId(e, tags) {
-  // Prevents events triggering on the parent
-  if (e.target !== e.currentTarget) {
-    // Returns the target Id of event for allowed tags
-    if (tags.indexOf(e.target.tagName) > -1) {
-      e.stopPropagation();
-      return e.target.id;
-    }
-  }
-  e.stopPropagation();
-  // Returns undefined if no target match
-  return undefined;
 }
 
 // ======================================================================

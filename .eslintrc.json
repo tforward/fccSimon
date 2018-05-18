@@ -16,6 +16,12 @@
         "strict": "off",
         "no-use-before-define": "off",
         "dot-notation": "off",
+        "no-unused-vars": [
+            "error",
+            {
+                "varsIgnorePattern": "_$"
+            }
+        ],
         "linebreak-style": [
             "error",
             "windows"

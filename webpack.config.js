@@ -3,8 +3,7 @@ const path = require("path");
 module.exports = {
   mode: "development",
   entry: {
-    app: "./src/scripts/script.js",
-    css: "./src/css/styles.css"
+    app: "./src/scripts/script.js"
   },
   devtool: "eval-source-map",
   devServer: {

@@ -113,7 +113,7 @@ html {
   }
   
   /* Hide default HTML checkbox */
-  .switch button {display:none;}
+  .switch button {display: none;}
   
   /* The slider */
   .slider {
@@ -147,6 +147,10 @@ html {
   
   .enable{
     background-color: #49D06E;
+  }
+
+  .last{
+    left: 3.5vw;
   }
   
   h4 {
