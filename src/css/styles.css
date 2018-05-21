@@ -52,7 +52,7 @@ html {
   }
   
   .simonScore {
-    margin: -0.1vw 1vw 0vw 1vw;
+    margin: -0.1vw 1vw 1vw 1vw;
     font-weight: bold;
     font-size: 4vw;
     height: 4vw;
@@ -87,9 +87,9 @@ html {
   
   .simonStrictLight {
     margin: 0.6vw 0vw 0.5vw 0vw;
-    height: 0.7vw;
-    width: 0.7vw;
-    border: 0.2vw solid #333333;
+    height: 1vw;
+    width: 1vw;
+    border: 0.1vw solid #333333;
     background-color: black;
     border-radius: 50%;
    }
@@ -190,7 +190,10 @@ html {
   cursor: pointer;
   z-index: 1;
   outline: none;
+  transition: .4s ease;
+  -webkit-transition: .4s ease;
 }
+
 .quarter1 {
 	top:0;
 	left:0;
@@ -232,4 +235,13 @@ html {
 	left: 25%;
 	border-radius: 50%;
   z-index: 2;
-	}
+  }
+  
+  .quarterCompHover {
+    background-color:pink;
+    cursor: pointer;
+    z-index: 1;
+    outline: none;
+    transition: .4s ease;
+    -webkit-transition: .4s ease;
+  }

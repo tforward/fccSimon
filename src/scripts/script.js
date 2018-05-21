@@ -32,13 +32,32 @@ myApp.initApplication = function init() {
   myApp.startBtn.init("btnSimonStart");
   myApp.startBtn.off();
 
+  myApp.strictBtn = startElem();
+  myApp.strictBtn.init("btnSimonStrict");
+  myApp.strictBtn.off();
+
+  myApp.strictLight = ElementDelegator();
+  myApp.strictLight.init("strictLightID");
+
+  myApp.btnYellow = colourElem();
+  myApp.btnYellow.init("btnYellow");
+
+  myApp.btnGreen = colourElem();
+  myApp.btnGreen.init("btnGreen");
+
+  myApp.btnRed = colourElem();
+  myApp.btnRed.init("btnRed");
+
+  myApp.btnBlue = colourElem();
+  myApp.btnBlue.init("btnBlue");
+
   // Create a event Observer
-  myApp.subscribers = SubscribersDelegator();
-  myApp.subscribers.init();
+  // myApp.subscribers = SubscribersDelegator();
+  // myApp.subscribers.init();
 
   // You can change out the Delegator used if needed
   // Elements part of the same delegator share the same properites
-  createObserversById(myApp.subscribers, ["toggleBtn"], ElementDelegator);
+  // createObserversById(myApp.subscribers, ["toggleBtn"], ElementDelegator);
 
   // console.log(myApp.subscribers.observers);
 
@@ -50,13 +69,12 @@ myApp.main = function main(selfId) {
   if (selfId) {
     console.log(selfId);
 
-    const gameOn = checkToggleState(selfId);
+    const state = gameState(selfId);
 
-    if (gameOn) {
-      myApp.score.on();
-      myApp.startBtn.on();
-    } else {
-      myApp.score.setup();
+    if (state) {
+      myApp.score.add();
+      const colour = getRandomColour();
+      pressBtn(colour);
     }
 
     // http://dabblet.com/gist/5476973
@@ -88,6 +106,30 @@ myApp.main = function main(selfId) {
   }
 };
 
+function gameState(selfId) {
+  const gameOn = checkToggleState(selfId);
+  if (gameOn) {
+    myApp.score.on();
+    if (selfId === "btnSimonStart") {
+      myApp.startBtn.toggleBtn();
+      const { toggle } = myApp.startBtn;
+      if (toggle === 1) {
+        return true;
+      }
+      // Start Btn Off
+      myApp.score.reset();
+      return false;
+    }
+    if (selfId === "btnSimonStrict") {
+      myApp.strictBtn.toggleBtn();
+      myApp.strictLight.elem.classList.toggle("disable");
+    }
+  } else {
+    myApp.score.setup();
+    myApp.startBtn.off();
+  }
+}
+
 function turnOn() {
   console.log("");
 }
@@ -103,20 +145,61 @@ function checkToggleState(selfId) {
   return undefined;
 }
 
+function pressBtn(colour) {
+  switch (colour) {
+    case "yellow":
+      myApp.btnYellow.press();
+      break;
+    case "red":
+      myApp.btnRed.press();
+      break;
+    case "green":
+      myApp.btnGreen.press();
+      break;
+    case "blue":
+      myApp.btnBlue.press();
+      break;
+    default:
+      return undefined;
+  }
+  return false;
+}
+
+// ======================================================================
+//  Simon Logic
+// ======================================================================
+
+function getRandomColour() {
+  const colours = ["red", "green", "yellow", "blue"];
+  const index = Math.floor(Math.random() * colours.length);
+  return colours[index];
+}
+
 // ======================================================================
 //  Element Delegators
 // ======================================================================
 
+function colourElem() {
+  const colourBtn = Object.create(ElementDelegator());
+  colourBtn.press = function press() {
+    this.elem.classList.add("quarterCompHover");
+    setTimeout(() => {
+      colourBtn.unPress();
+    }, 630);
+  };
+  colourBtn.unPress = function unPress() {
+    this.elem.classList.remove("quarterCompHover");
+  };
+  return colourBtn;
+}
+
 function startElem() {
   const StartBtn = Object.create(ElementDelegator());
-  // I'm here I need to fix the toggle of this button, see the other toggle for help
-  StartBtn.off = function on() {
+  StartBtn.off = function off() {
     this.toggle = 0;
-    console.log(this.toggle);
   };
-  StartBtn.on = function off() {
-    this.toggle = 1;
-    console.log(this.toggle);
+  StartBtn.toggleBtn = function toggleBtn() {
+    this.toggle = this.toggle === 0 ? 1 : 0;
   };
   return StartBtn;
 }
