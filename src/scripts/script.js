@@ -67,80 +67,130 @@ myApp.initApplication = function init() {
 
 myApp.main = function main(selfId) {
   if (selfId) {
-    console.log(selfId);
-
     const state = gameState(selfId);
 
     if (state) {
-      myApp.score.add();
-      const colour = getRandomColour();
-      pressBtn(colour);
+      if (myApp.turn === "ai") {
+        const colour = getRandomColour();
+        pressBtn(colour);
+        myApp.aiMoves.push(colour);
+        myApp.score.add();
+        myApp.playerMoves = [];
+        switchTurn();
+      } else if (myApp.turn === "player") {
+        const plColour = getButtonColour(selfId);
+        myApp.playerMoves.push(plColour);
+        console.log("Ai", myApp.aiMoves);
+        console.log("Player", myApp.playerMoves);
+        const validMove = checkMove();
+        console.log("valid", validMove);
+        if (validMove === false) {
+          myApp.playerMoves = [];
+          myApp.score.error();
+          displayAiMoves();
+        } else if (validMove) {
+          if (noMoreMoves()) {
+            displayAiMoves();
+            switchTurn();
+            myApp.main(true);
+          }
+        }
+      }
     }
-
-    // http://dabblet.com/gist/5476973
-
-    // const elemObj = myApp.subscribers.observers[selfId];
-
-    // let colourClass = elemObj.elem.className;
-
-    // colourClass = colourClass === "greenClass" ? "redClass" : "greenClass";
-
-    // elemObj.elem.className = colourClass;
-
-    // const test5 = function test5() {
-    //   console.log("TEST5");
-    // };
-
-    // // Adds a new function to all observers
-    // myApp.subscribers.broadcast("newFunc", "test5", test5);
-
-    // elemObj.add();
-
-    // // elemObj.newFunc("test5", test5)
-
-    // elemObj.test5();
-
-    // elemObj.msg(elemObj.id);
-
-    // console.log(myApp.subscribers);
   }
 };
 
+function noMoreMoves() {
+  if (myApp.playerMoves.length === myApp.aiMoves.length) {
+    return true;
+  }
+  return false;
+}
+
+function displayAiMoves() {
+  let i = 0;
+  function displayDelay() {
+    pressBtn(myApp.aiMoves[i]);
+    i += 1;
+    if (i < myApp.aiMoves.length) {
+      setTimeout(displayDelay, 1500);
+    }
+  }
+  displayDelay();
+}
+
+function checkMove() {
+  // Check to make sure each player move matches AI
+  for (let i = 0; i < myApp.playerMoves.length; i += 1) {
+    if (myApp.playerMoves[i] !== myApp.aiMoves[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function getButtonColour(iid) {
+  const colourDict = { btnRed: "red", btnGreen: "green", btnBlue: "blue", btnYellow: "yellow" };
+  return colourDict[iid];
+}
+
+function switchTurn() {
+  myApp.turn = myApp.turn === "ai" ? "player" : "ai";
+}
+
 function gameState(selfId) {
-  const gameOn = checkToggleState(selfId);
-  if (gameOn) {
-    myApp.score.on();
+  const turnGameOn = checkToggleState(selfId);
+  if (turnGameOn) {
     if (selfId === "btnSimonStart") {
       myApp.startBtn.toggleBtn();
       const { toggle } = myApp.startBtn;
       if (toggle === 1) {
+        gameStart();
         return true;
-      }
-      // Start Btn Off
-      myApp.score.reset();
-      return false;
-    }
-    if (selfId === "btnSimonStrict") {
+      } // Start Pressed Again
+      gameEnd();
+      gameStart();
+      myApp.startBtn.toggle = 1;
+      return true;
+    } else if (selfId === "btnSimonStrict") {
       myApp.strictBtn.toggleBtn();
       myApp.strictLight.elem.classList.toggle("disable");
+    } else if (selfId !== "btnSimonStart" && myApp.startBtn.toggle === 1) {
+      return true;
     }
-  } else {
-    myApp.score.setup();
-    myApp.startBtn.off();
   }
 }
 
-function turnOn() {
-  console.log("");
+function gameStart() {
+  myApp.turn = "ai";
+  myApp.aiMoves = [];
+  myApp.playerMoves = [];
+  myApp.score.reset();
 }
+
+function gameEnd() {
+  myApp.score.reset();
+}
+
+function powerOff() {
+  myApp.score.setup();
+  myApp.startBtn.off();
+}
+
+function turnOn() {}
 
 function checkToggleState(selfId) {
   const { toggle } = myApp.toggleBtn.btn;
-  if (toggle === 1) {
+  if (selfId === "toggleBtn" && toggle === 1) {
+    myApp.score.on();
+    return true;
+  } else if (toggle === 1) {
     return true;
   } else if (selfId !== "toggleBtn" && toggle === 0) {
     alert("No sound comes from the Simon game, it appears to be off \n(Hint: Hit the toggle button)");
     return false;
+  } else if (toggle === 0) {
+    powerOff();
   }
   return undefined;
 }
@@ -213,6 +263,12 @@ function scoreElem() {
   };
   Score.on = function on() {
     this.elem.textContent = "--";
+  };
+  Score.error = function error() {
+    setTimeout(() => {
+      this.elem.textContent = "1";
+    }, 1300);
+    this.elem.textContent = "!!";
   };
   Score.add = function add() {
     this.count += 1;

@@ -65,8 +65,8 @@ html {
   
   .simonStart {
     margin: -0.1vw 1vw 0vw 1vw;
-    height: 2.5vw;
-    width: 2.5vw;
+    height: 3vw;
+    width: 3vw;
     border: 0.2vw solid #333333;
     background-color: red;
     border-radius: 50%;
@@ -76,8 +76,8 @@ html {
   
   .simonStrict {
     margin: -0.1vw 1vw 0vw 1vw;
-    height: 2.5vw;
-    width: 2.5vw;
+    height: 3vw;
+    width: 3vw;
     border: 0.2vw solid #333333;
     background-color: yellow;
     border-radius: 50%;
@@ -185,13 +185,19 @@ html {
 	height: 50%;
 	transition: background-color 0.2s ease-in-out;
 }
-.quarter:hover {
+.quarter:active {
   background-color:pink;
   cursor: pointer;
   z-index: 1;
   outline: none;
   transition: .4s ease;
   -webkit-transition: .4s ease;
+}
+
+.quarter:hover {
+  cursor: pointer;
+  z-index: 1;
+  outline: none;
 }
 
 .quarter1 {
