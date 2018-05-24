@@ -50,19 +50,6 @@ myApp.initApplication = function init() {
 
   myApp.btnBlue = colourElem();
   myApp.btnBlue.init("btnBlue");
-
-  // Create a event Observer
-  // myApp.subscribers = SubscribersDelegator();
-  // myApp.subscribers.init();
-
-  // You can change out the Delegator used if needed
-  // Elements part of the same delegator share the same properites
-  // createObserversById(myApp.subscribers, ["toggleBtn"], ElementDelegator);
-
-  // console.log(myApp.subscribers.observers);
-
-  // Run any setup Delegators here
-  // myApp.subscribers.broadcast("setup");
 };
 
 myApp.main = function main(selfId) {
@@ -71,26 +58,17 @@ myApp.main = function main(selfId) {
 
     if (state) {
       if (myApp.turn === "ai") {
-        const colour = getRandomColour();
-        pressBtn(colour);
-        myApp.aiMoves.push(colour);
-        myApp.score.add();
-        myApp.playerMoves = [];
-        switchTurn();
+        setTimeout(aiTurn, 1000);
       } else if (myApp.turn === "player") {
         const plColour = getButtonColour(selfId);
         myApp.playerMoves.push(plColour);
-        console.log("Ai", myApp.aiMoves);
-        console.log("Player", myApp.playerMoves);
         const validMove = checkMove();
-        console.log("valid", validMove);
         if (validMove === false) {
           myApp.playerMoves = [];
           myApp.score.error();
           displayAiMoves();
         } else if (validMove) {
           if (noMoreMoves()) {
-            displayAiMoves();
             switchTurn();
             myApp.main(true);
           }
@@ -99,6 +77,15 @@ myApp.main = function main(selfId) {
     }
   }
 };
+
+function aiTurn() {
+  const colour = getRandomColour();
+  myApp.aiMoves.push(colour);
+  myApp.score.add();
+  displayAiMoves();
+  myApp.playerMoves = [];
+  switchTurn();
+}
 
 function noMoreMoves() {
   if (myApp.playerMoves.length === myApp.aiMoves.length) {
@@ -113,7 +100,7 @@ function displayAiMoves() {
     pressBtn(myApp.aiMoves[i]);
     i += 1;
     if (i < myApp.aiMoves.length) {
-      setTimeout(displayDelay, 1500);
+      setTimeout(displayDelay, 1600);
     }
   }
   displayDelay();
@@ -147,7 +134,7 @@ function gameState(selfId) {
       if (toggle === 1) {
         gameStart();
         return true;
-      } // Start Pressed Again
+      } // If Start Pressed Again
       gameEnd();
       gameStart();
       myApp.startBtn.toggle = 1;
@@ -159,6 +146,7 @@ function gameState(selfId) {
       return true;
     }
   }
+  return undefined;
 }
 
 function gameStart() {
@@ -196,17 +184,25 @@ function checkToggleState(selfId) {
 }
 
 function pressBtn(colour) {
+  const audioRed = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound1.mp3");
+  const audioYellow = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound2.mp3");
+  const audioGreen = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound3.mp3");
+  const audioBlue = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound4.mp3");
   switch (colour) {
     case "yellow":
+      audioYellow.play();
       myApp.btnYellow.press();
       break;
     case "red":
+      audioRed.play();
       myApp.btnRed.press();
       break;
     case "green":
+      audioGreen.play();
       myApp.btnGreen.press();
       break;
     case "blue":
+      audioBlue.play();
       myApp.btnBlue.press();
       break;
     default:
@@ -265,8 +261,9 @@ function scoreElem() {
     this.elem.textContent = "--";
   };
   Score.error = function error() {
+    const score = this.elem.textContent;
     setTimeout(() => {
-      this.elem.textContent = "1";
+      this.elem.textContent = score;
     }, 1300);
     this.elem.textContent = "!!";
   };
@@ -349,31 +346,6 @@ function ElementDelegator() {
   };
 
   return Element;
-}
-
-function TestDelegator() {
-  // Here you can define properties that will be shared between all defined within
-  // the subscription
-  // These can be accessed via the subscriptions or
-  // directly by calling myApp.subscribers.observers[id]
-  // which you can use dot notation on any property or method
-  // For object.create(null) you can replace null with a prototype you want to inherit
-  // Ex: functionName(), just don't have duplicate name spaces
-  const Test = Object.create(ElementDelegator());
-
-  Test.setup = function setup() {
-    this.count = 0;
-  };
-
-  Test.add = function add() {
-    this.count += 1;
-    this.elem.textContent = this.count;
-  };
-
-  Test.msg = function msg(content) {
-    console.log(this.count);
-  };
-  return Test;
 }
 
 // ======================================================================
