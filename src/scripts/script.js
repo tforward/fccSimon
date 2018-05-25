@@ -55,7 +55,7 @@ myApp.initApplication = function init() {
 myApp.main = function main(selfId) {
   if (selfId) {
     const state = gameState(selfId);
-
+    checkGameWin();
     if (state) {
       if (myApp.turn === "ai") {
         setTimeout(aiTurn, 1000);
@@ -64,10 +64,10 @@ myApp.main = function main(selfId) {
         myApp.playerMoves.push(plColour);
         const validMove = checkMove();
         if (validMove === false) {
-          myApp.playerMoves = [];
-          myApp.score.error();
-          displayAiMoves();
+          moveError();
+          setTimeout(displayAiMoves, 1000);
         } else if (validMove) {
+          pressBtn(plColour);
           if (noMoreMoves()) {
             switchTurn();
             myApp.main(true);
@@ -77,6 +77,23 @@ myApp.main = function main(selfId) {
     }
   }
 };
+
+function checkGameWin() {
+  if (myApp.score.count === 20) {
+    myApp.score.win();
+    setTimeout(btnSound("red"), 100);
+    setTimeout(btnSound("green"), 200);
+    gameState("btnSimonStart");
+  }
+}
+
+function moveError() {
+  myApp.playerMoves = [];
+  myApp.score.error();
+  // Error Sound
+  btnSound("blue");
+  btnSound("green");
+}
 
 function aiTurn() {
   const colour = getRandomColour();
@@ -183,26 +200,44 @@ function checkToggleState(selfId) {
   return undefined;
 }
 
-function pressBtn(colour) {
+function btnSound(colour) {
   const audioRed = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound1.mp3");
   const audioYellow = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound2.mp3");
   const audioGreen = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound3.mp3");
   const audioBlue = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound4.mp3");
+
   switch (colour) {
     case "yellow":
       audioYellow.play();
-      myApp.btnYellow.press();
       break;
     case "red":
       audioRed.play();
-      myApp.btnRed.press();
       break;
     case "green":
       audioGreen.play();
-      myApp.btnGreen.press();
       break;
     case "blue":
       audioBlue.play();
+      break;
+    default:
+      return undefined;
+  }
+  return false;
+}
+
+function pressBtn(colour) {
+  btnSound(colour);
+  switch (colour) {
+    case "yellow":
+      myApp.btnYellow.press();
+      break;
+    case "red":
+      myApp.btnRed.press();
+      break;
+    case "green":
+      myApp.btnGreen.press();
+      break;
+    case "blue":
       myApp.btnBlue.press();
       break;
     default:
@@ -277,6 +312,9 @@ function scoreElem() {
   };
   Score.display = function display() {
     this.elem.textContent = this.count;
+  };
+  Score.win = function win() {
+    this.elem.textContent = "Win";
   };
   return Score;
 }
