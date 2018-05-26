@@ -1,7 +1,6 @@
 "use strict";
 
 import { EventDelegator, getTargetId } from "./olooEvent";
-import { SubscribersDelegator, createObserversById } from "./olooObserver";
 import css_ from "../css/styles.css";
 
 const myApp = Object.create(null);
@@ -50,6 +49,8 @@ myApp.initApplication = function init() {
 
   myApp.btnBlue = colourElem();
   myApp.btnBlue.init("btnBlue");
+
+  myApp.ColourBtns = ["btnRed", "btnGreen", "btnBlue", "btnYellow"];
 };
 
 myApp.main = function main(selfId) {
@@ -58,6 +59,7 @@ myApp.main = function main(selfId) {
     checkGameWin();
     if (state) {
       if (myApp.turn === "ai") {
+        myApp.pausePlayerMoves = true;
         setTimeout(aiTurn, 1000);
       } else if (myApp.turn === "player") {
         const plColour = getButtonColour(selfId);
@@ -65,7 +67,6 @@ myApp.main = function main(selfId) {
         const validMove = checkMove();
         if (validMove === false) {
           moveError();
-          setTimeout(displayAiMoves, 1000);
         } else if (validMove) {
           pressBtn(plColour);
           if (noMoreMoves()) {
@@ -89,10 +90,16 @@ function checkGameWin() {
 
 function moveError() {
   myApp.playerMoves = [];
-  myApp.score.error();
+  setTimeout(myApp.score.error(), 300);
   // Error Sound
   btnSound("blue");
   btnSound("green");
+  if (myApp.strictBtn.toggle === 1) {
+    // Restart
+    myApp.main("btnSimonStart");
+  } else {
+    setTimeout(displayAiMoves, 1000);
+  }
 }
 
 function aiTurn() {
@@ -118,6 +125,9 @@ function displayAiMoves() {
     i += 1;
     if (i < myApp.aiMoves.length) {
       setTimeout(displayDelay, 1600);
+    } else {
+      // Don't allow the player to press a coloured button during this phase until it's done
+      myApp.pausePlayerMoves = false;
     }
   }
   displayDelay();
@@ -179,6 +189,8 @@ function gameEnd() {
 
 function powerOff() {
   myApp.score.setup();
+  myApp.aiMoves = [];
+  myApp.playerMoves = [];
   myApp.startBtn.off();
 }
 
@@ -308,7 +320,7 @@ function scoreElem() {
   };
   Score.reset = function reset() {
     this.count = 0;
-    Score.display();
+    this.elem.textContent = 0;
   };
   Score.display = function display() {
     this.elem.textContent = this.count;
@@ -328,7 +340,7 @@ function ToggleBtnDelegator() {
       this.slider.className = "slider round";
       this.ball.className = "ball";
     } else {
-      this.btn.toggle += 1;
+      this.btn.toggle = 1;
       this.slider.className = "slider round enable";
       this.ball.className = "ball last";
     }
@@ -402,7 +414,11 @@ function eventController(args, e) {
   const id = getTargetId(e, args.tags);
 
   if (id) {
-    myApp.main(id);
+    if (myApp.pausePlayerMoves === true && myApp.ColourBtns.indexOf(id) !== -1) {
+      // DO NOTHING
+    } else {
+      myApp.main(id);
+    }
   }
 
   // Stop the event from going further up the DOM
