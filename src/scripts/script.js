@@ -302,7 +302,7 @@ function scoreElem() {
 
   Score.setup = function setup() {
     this.count = 0;
-    this.elem.textContent = "";
+    this.elem.textContent = "OFF";
   };
   Score.on = function on() {
     this.elem.textContent = "--";

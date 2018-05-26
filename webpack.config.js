@@ -1,17 +1,17 @@
 const path = require("path");
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   entry: {
     app: "./src/scripts/script.js"
   },
-  devtool: "eval-source-map",
-  devServer: {
-    contentBase: "./dist"
-  },
+  // devtool: "eval-source-map",
+  // devServer: {
+  //  contentBase: "./dist"
+  // },
   output: {
     filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "dist")
+    path: path.resolve(__dirname, "docs")
   },
   module: {
     rules: [
